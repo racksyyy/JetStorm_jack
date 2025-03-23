@@ -1,0 +1,72 @@
+class Jet {
+    field int x, y, ySpeed, gravity, thrust;
+    field Array projectiles;
+    field int nextProjectileIndex;
+
+    constructor Jet new(int initialX, int initialY) {
+        let x = initialX;
+        let y = initialY;
+        let ySpeed = 0;
+        let gravity = 1;
+        let thrust = -5;
+        let projectiles = Array.new(10); // Adjust size as needed
+        let nextProjectileIndex = 0;
+        return this;
+    }
+    method void move() {
+        let ySpeed = ySpeed + gravity;
+        if (Keyboard.keyPressed() = 38) { // Up arrow key
+            let ySpeed = thrust;
+        }
+        let y = y + ySpeed;
+
+        // Screen boundary checks
+        if (y < 0) {
+            let y = 0;
+            let ySpeed = 0;
+        }
+        if (y > 250) { // Adjust screen height
+            let y = 250;
+            let ySpeed = 0;
+        }
+        return;
+    }
+    method void draw() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + 20, y + 10); // Adjust size as needed
+        return;
+    }
+    method void shoot() {
+        let projectiles[nextProjectileIndex] = Projectile.new(x + 20, y + 5); // Create projectile at jet's nose
+        let nextProjectileIndex = (nextProjectileIndex + 1) % 10; // Cycle through the array
+        return;
+    }
+    method void moveProjectiles() {
+        var int i;
+        let i = 0;
+        while (i < 10) {
+            if (~(projectiles[i] = null)) {
+                do projectiles[i].move();
+                do projectiles[i].draw();
+                if (~(projectiles[i].isAlive())) {
+                    let projectiles[i] = null;
+                }
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+    method void movement(int key){
+        if (key = 38){
+            do move();
+        }
+        if (key = 40){
+            let ySpeed = ySpeed + gravity;
+            let y = y + ySpeed;
+        }
+        if (key = 32){
+            do shoot();
+        }
+        return;
+    }
+}

@@ -1,0 +1,44 @@
+class Enemy {
+    field int x, y;
+    field int speed;
+
+    constructor Enemy new(int startX, int startY) {
+        let x = startX;
+        let y = startY;
+        let speed = 3;
+        do draw();
+        return this;
+    }
+
+    method void move() {
+        do erase();
+        let x = x - speed;
+
+        if (x < 0) { // Reset position if off-screen
+            let x = 512;
+        }
+
+        do draw();
+        return;
+    }
+
+    method void draw() {
+        var int memAddress;
+        let memAddress = 16384 + (x/16) + (y*32);
+        do Memory.poke(memAddress, -30000); 
+        return;
+    }
+
+    method void erase() {
+        var int memAddress;
+        let memAddress = 16384 + (x/16) + (y*32);
+        do Memory.poke(memAddress, 0);
+        return;
+    }
+
+    method void dispose() {
+        do erase();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

@@ -24,17 +24,20 @@ class Jet {
         return;
     }
 
-    method void draw() {
-        var int memAddress;
-        let memAddress = 16384 + (x/16) + (y*32);
-        do Memory.poke(memAddress, -30000);
+    method void draw(){
+        do erase();
+        do Screen.setColor(1);
+        do Screen.drawRectangle(x + 20, y-10 ,x+30,y-5);
+        do Screen.drawRectangle(x + 5,y-5,x + 45, y);
+        do Screen.drawRectangle(x, y, x + size + ancho, y + size);
         return;
     }
 
-    method void erase() {
-        var int memAddress;
-        let memAddress = 16384 + (x/16) + (y*32);
-        do Memory.poke(memAddress, 0);
+    method void erase(){ 
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 20, y-10 ,x+30,y-5);
+        do Screen.drawRectangle(x + 5,y-5,x + 45, y);
+        do Screen.drawRectangle(x, y, x + size + ancho, y + size);
         return;
     }
 
@@ -43,11 +46,11 @@ class Jet {
         do erase();
 
         if ((key = 131) | (key = 32)) { // Up Arrow or Spacebar (Jump)
-            let velocity = jumpForce;
+            let velocity = jumpForce; // Apply jump force
         }
 
         let velocity = velocity + gravity; // Apply gravity
-        let y = y + velocity;
+        let y = y + velocity; // Move Jet
 
         if (y > 230) { // Prevent jet from falling below ground
             let y = 230;
@@ -67,14 +70,18 @@ class Jet {
         if (bullet = null) { 
             let bullet = Bullet.new(x + 8, y - 5);
         }
-        return;
+        return; // Explicit return statement added
     }
+
+
 
     /** Update bullets */
     method void updateBullet() {
         var int offScreen;
-        if (~(bullet = null)) {
+    
+        if (~(bullet = null)) { // Correctly check if bullet exists
             do bullet.move();
+        
             let offScreen = bullet.isOffScreen();
             if (offScreen) {
                 do bullet.dispose();
@@ -83,4 +90,5 @@ class Jet {
         }
         return;
     }
+
 }

@@ -25,9 +25,10 @@ class Enemy {
     method void draw() {
         var int memAddress;
         let memAddress = 16384 + (x/16) + (y*32);
-        do Memory.poke(memAddress, -30000); 
+        do Memory.poke(memAddress, -16384); // Use a valid integer
         return;
     }
+
 
     method void erase() {
         var int memAddress;

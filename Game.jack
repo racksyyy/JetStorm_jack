@@ -1,44 +1,27 @@
-class Enemy {
-    field int x, y;
-    field int speed;
+class Game {
+    field Jet jet;
+    field Enemy enemy;
+    field int key;
 
-    constructor Enemy new(int startX, int startY) {
-        let x = startX;
-        let y = startY;
-        let speed = 3;
-        do draw();
+    constructor Game new() {
+        let jet = Jet.new(50, 100);
+        let enemy = Enemy.new(500, 100);
         return this;
     }
 
-    method void move() {
-        do erase();
-        let x = x - speed;
+    method void run() {
+        while (true) {
+            let key = Keyboard.keyPressed();
+            do jet.movement(key);
 
-        if (x < 0) { // Reset position if off-screen
-            let x = 512;
+            if (key = 32) { // Spacebar to shoot
+                do jet.shoot();
+            }
+            
+            do jet.updateBullet();
+            do enemy.move();
+            do Sys.wait(100); // Slows down the game loop
         }
-
-        do draw();
-        return;
-    }
-
-    method void draw() {
-        var int memAddress;
-        let memAddress = 16384 + (x/16) + (y*32);
-        do Memory.poke(memAddress, -30000); 
-        return;
-    }
-
-    method void erase() {
-        var int memAddress;
-        let memAddress = 16384 + (x/16) + (y*32);
-        do Memory.poke(memAddress, 0);
-        return;
-    }
-
-    method void dispose() {
-        do erase();
-        do Memory.deAlloc(this);
         return;
     }
 }

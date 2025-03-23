@@ -51,7 +51,7 @@ call Math.multiply 2
 add
 pop local 0
 push local 0
-push constant 30000
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0

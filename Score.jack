@@ -1,0 +1,24 @@
+class Score {
+    field int score;
+
+    constructor Score new() {
+        let score = 0;
+        return this;
+    }
+
+    method void increase() {
+        let score = score + 1; // Increment the score (adjust as needed)
+        return;
+    }
+
+    method void draw() {
+        do Output.moveCursor(0, 0); // Position the score display
+        do Output.printString("Score: ");
+        do Output.printInt(score);
+        return;
+    }
+
+    method int getScore(){
+        return score;
+    }
+}

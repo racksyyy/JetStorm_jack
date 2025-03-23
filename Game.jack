@@ -1,0 +1,416 @@
+class Game {
+    field Jet playerJet;
+    field Array obstacles;
+    field int obstacleCount;
+    field int frameCount;
+    field Score score;
+    field boolean gameOver;
+    field Array enemies;
+    field int enemyCount;
+    field boolean gameStarted; // Add game started field
+
+    constructor Game new() {
+        let this.playerJet = Jet.new(100, 100);
+        let this.obstacles = Array.new(5);
+        let this.obstacleCount = 0;
+        let this.frameCount = 0;
+        let this.score = Score.new();
+        let this.gameOver = false;
+        let this.enemies = Array.new(5);
+        let this.enemyCount = 0;
+        let this.gameStarted = false; // Initialize game started to false
+        return this;
+    }
+
+    method void run() {
+        var int key;
+        var int i, j;
+
+        while (true) {
+            do Screen.clearScreen();
+            let key = Keyboard.keyPressed();
+
+            if (~gameStarted) {
+                do drawStartScreen();
+                if (key = 32) { // Spacebar to start
+                    let gameStarted = true;
+                }
+            } else {
+
+                if (gameOver) {
+                    do drawGameOverScreen();
+                    if (key = 32) { // Spacebar for restart
+                        do restart();
+                    }
+                } else {
+                    do playerJet.movement(key);
+                    do playerJet.moveProjectiles();
+
+                    if (frameCount % 100 == 0) {
+                        do generateObstacle();
+                    }
+
+                    do moveObstacles();
+                    do drawObstacles();
+
+                    if (frameCount % 150 == 0) { // Generate enemies less frequently
+                        do generateEnemy();
+                    }
+
+                    do moveEnemies();
+                    do drawEnemies();
+
+                    // Collision detection (Jet vs. Obstacles)
+                    let i = 0;
+                    while (i < obstacleCount) {
+                        if (Collision.isCollision(playerJet.x, playerJet.y, 20, 10, obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height)) {
+                            let gameOver = true; // Game over
+                        }
+                        let i = i + 1;
+                    }
+
+                    // Collision detection (Projectiles vs. Obstacles)
+                    let i = 0;
+                    while (i < playerJet.nextProjectileIndex) {
+                        if (~(playerJet.projectiles[i] = null)) {
+                            let j = 0;
+                            while (j < obstacleCount) {
+                                if (Collision.isCollision(playerJet.projectiles[i].x, playerJet.projectiles[i].y, 2, 5, obstacles[j].x, obstacles[j].y, obstacles[j].width, obstacles[j].height)) {
+                                    let playerJet.projectiles[i] = null;
+                                    do obstacles[j].setAlive(false);
+                                    do score.increase();
+                                }
+                                let j = j + 1;
+                            }
+                        }
+                        let i = i + 1;
+                    }
+
+                    // Collision detection (Jet vs. Enemies)
+                    let i = 0;
+                    while (i < enemyCount) {
+                        if (Collision.isCollision(playerJet.x, playerJet.y, 20, 10, enemies[i].x, enemies[i].y, 15, 8)) {
+                            let gameOver = true; // Game over
+                        }
+                        let i = i + 1;
+                    }
+
+                    // Collision detection (Projectiles vs. Enemies)
+                    let i = 0;
+                    while (i < playerJet.nextProjectileIndex) {
+                        if (~(playerJet.projectiles[i] = null)) {
+                            let j = 0;
+                            while (j < enemyCount) {
+                                if (Collision.isCollision(playerJet.projectiles[i].x, playerJet.projectiles[i].y, 2, 5, enemies[j].x, enemies[j].y, 15, 8)) {
+                                    let playerJet.projectiles[i] = null;
+                                    do enemies[j].setAlive(false);
+                                    do score.increase();
+                                }
+                                let j = j + 1;
+                            }
+                        }
+                        let i = i + 1;
+                    }
+
+                    do score.draw();
+                    let this.frameCount = this.frameCount + 1;
+                    do Sys.wait(50);
+                }
+            }
+        }
+        return;
+    }
+
+    method void drawStartScreen() {
+        do Output.moveCursor(10, 20);
+        do Output.printString("Jet Storm");
+        do Output.moveCursor(12, 20);
+        do Output.printString("Press Space to Start");
+        return;
+    }
+
+    method void run() {
+        // ... (existing code) ...
+        if (frameCount % 150 == 0) { // Generate enemies less frequently
+            do generateEnemy();
+        }
+
+        do moveEnemies();
+        do drawEnemies();
+
+        // Collision detection (Jet vs. Enemies)
+        let i = 0;
+        while (i < enemyCount) {
+            if (Collision.isCollision(playerJet.x, playerJet.y, 20, 10, enemies[i].x, enemies[i].y, 15, 8)) {
+                let gameOver = true; // Game over
+            }
+            let i = i + 1;
+        }
+
+        // Collision detection (Projectiles vs. Enemies)
+        let i = 0;
+        while (i < playerJet.nextProjectileIndex) {
+            if (~(playerJet.projectiles[i] = null)) {
+                let j = 0;
+                while (j < enemyCount) {
+                    if (Collision.isCollision(playerJet.projectiles[i].x, playerJet.projectiles[i].y, 2, 5, enemies[j].x, enemies[j].y, 15, 8)) {
+                        let playerJet.projectiles[i] = null;
+                        do enemies[j].setAlive(false);
+                        do score.increase();
+                    }
+                    let j = j + 1;
+                }
+            }
+            let i = i + 1;
+        }
+
+        // ... (existing code) ...
+    }
+
+    method void generateEnemy() {
+        var int enemyX, enemyY;
+        if (enemyCount < 5) {
+            let enemyX = 512;
+            let enemyY = Random.randRange(0, 200);
+            let enemies[enemyCount] = Enemy.new(enemyX, enemyY);
+            let enemyCount = enemyCount + 1;
+        }
+        return;
+    }
+
+    method void drawEnemies() {
+        var int i;
+        let i = 0;
+        while (i < enemyCount) {
+            do enemies[i].draw();
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void moveEnemies() {
+        var int i;
+        let i = 0;
+        while (i < enemyCount) {
+            do enemies[i].move();
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void run() {
+        var int key;
+        var int i, j;
+
+        while (true) {
+            do Screen.clearScreen();
+            let key = Keyboard.keyPressed();
+
+            if (gameOver) {
+                do drawGameOverScreen();
+                if (key = 32) { // Spacebar for restart
+                    do restart();
+                }
+            } else {
+                do playerJet.movement(key);
+                do playerJet.moveProjectiles();
+
+                if (frameCount % 100 == 0) {
+                    do generateObstacle();
+                }
+
+                do moveObstacles();
+                do drawObstacles();
+
+                // Collision detection (Jet vs. Obstacles)
+                let i = 0;
+                while (i < obstacleCount) {
+                    if (Collision.isCollision(playerJet.x, playerJet.y, 20, 10, obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height)) {
+                        let gameOver = true; // Game over
+                    }
+                    let i = i + 1;
+                }
+
+                // Collision detection (Projectiles vs. Obstacles)
+                let i = 0;
+                while (i < playerJet.nextProjectileIndex) {
+                    if (~(playerJet.projectiles[i] = null)) {
+                        let j = 0;
+                        while (j < obstacleCount) {
+                            if (Collision.isCollision(playerJet.projectiles[i].x, playerJet.projectiles[i].y, 2, 5, obstacles[j].x, obstacles[j].y, obstacles[j].width, obstacles[j].height)) {
+                                let playerJet.projectiles[i] = null;
+                                do obstacles[j].setAlive(false);
+                                do score.increase();
+                            }
+                            let j = j + 1;
+                        }
+                    }
+                    let i = i + 1;
+                }
+                do score.draw();
+                let this.frameCount = this.frameCount + 1;
+                do Sys.wait(50);
+            }
+        }
+        return;
+    }
+
+    method void drawGameOverScreen() {
+        do Output.moveCursor(10, 20);
+        do Output.printString("Game Over!");
+        do Output.moveCursor(12, 20);
+        do Output.printString("Score: ");
+        do Output.printInt(score.getScore());
+        do Output.moveCursor(14, 20);
+        do Output.printString("Press Space to Restart");
+        return;
+    }
+
+    method void restart() {
+        let gameOver = false;
+        let obstacleCount = 0;
+        let frameCount = 0;
+        let score = Score.new();
+        let playerJet = Jet.new(100, 100);
+        let obstacles = Array.new(5);
+        return;
+    }
+
+    method void run() {
+        var int key;
+        var int i, j;
+
+        while (true) {
+            do Screen.clearScreen();
+            let key = Keyboard.keyPressed();
+
+            do playerJet.movement(key);
+            do playerJet.moveProjectiles();
+
+            if (frameCount % 100 == 0) {
+                do generateObstacle();
+            }
+
+            do moveObstacles();
+            do drawObstacles();
+
+            // Collision detection (Jet vs. Obstacles)
+            let i = 0;
+            while (i < obstacleCount) {
+                if (Collision.isCollision(playerJet.x, playerJet.y, 20, 10, obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height)) {
+                    do Sys.halt(); // Game over
+                }
+                let i = i + 1;
+            }
+
+            // Collision detection (Projectiles vs. Obstacles)
+            let i = 0;
+            while (i < playerJet.nextProjectileIndex) {
+                if (~(playerJet.projectiles[i] = null)) {
+                    let j = 0;
+                    while (j < obstacleCount) {
+                        if (Collision.isCollision(playerJet.projectiles[i].x, playerJet.projectiles[i].y, 2, 5, obstacles[j].x, obstacles[j].y, obstacles[j].width, obstacles[j].height)) {
+                            let playerJet.projectiles[i] = null;
+                            do obstacles[j].setAlive(false);
+                            do score.increase(); // Increase the score
+                        }
+                        let j = j + 1;
+                    }
+                }
+                let i = i + 1;
+            }
+            do score.draw(); // Draw the score
+            let this.frameCount = this.frameCount + 1;
+            do Sys.wait(50);
+        }
+        return;
+    }
+
+    method void run() {
+        var int key;
+        var int i, j; // Loop counters
+
+        while (true) {
+            do Screen.clearScreen();
+            let key = Keyboard.keyPressed();
+
+            do playerJet.movement(key); // Use movement method from Jet
+            do playerJet.moveProjectiles(); // Move and draw projectiles
+
+            if (frameCount % 100 == 0) {
+                do generateObstacle();
+            }
+
+            do moveObstacles();
+            do drawObstacles();
+
+            // Collision detection (Jet vs. Obstacles)
+            let i = 0;
+            while (i < obstacleCount) {
+                if (Collision.isCollision(playerJet.x, playerJet.y, 20, 10, obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height)) {
+                    do Sys.halt(); // Game over (replace with game over logic later)
+                }
+                let i = i + 1;
+            }
+
+            // Collision detection (Projectiles vs. Obstacles)
+            let i = 0;
+            while (i < playerJet.nextProjectileIndex) {
+                if (~(playerJet.projectiles[i] = null)) {
+                    let j = 0;
+                    while (j < obstacleCount) {
+                        if (Collision.isCollision(playerJet.projectiles[i].x, playerJet.projectiles[i].y, 2, 5, obstacles[j].x, obstacles[j].y, obstacles[j].width, obstacles[j].height)) {
+                            let playerJet.projectiles[i] = null;
+                            do obstacles[j].setAlive(false);
+                        }
+                        let j = j + 1;
+                    }
+                }
+                let i = i + 1;
+            }
+
+            let this.frameCount = this.frameCount + 1;
+            do Sys.wait(50);
+        }
+        return;
+    }
+
+    method void generateObstacle() {
+        var int obstacleX, obstacleY, obstacleWidth, obstacleHeight;
+        if (obstacleCount < 5) {
+            let obstacleX = 512;
+            let obstacleY = Random.randRange(0, 200);
+            let obstacleWidth = 30;
+            let obstacleHeight = 50;
+            let obstacles[obstacleCount] = Obstacle.new(obstacleX, obstacleY, obstacleWidth, obstacleHeight);
+            let this.obstacleCount = this.obstacleCount + 1;
+        }
+        return;
+    }
+
+    method void drawObstacles() {
+        var int i;
+        let i = 0;
+        while (i < obstacleCount) {
+            do obstacles[i].draw();
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void moveObstacles() {
+        var int i;
+        let i = 0;
+        while (i < obstacleCount) {
+            let obstacles[i].x = obstacles[i].x - 2;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void dispose() {
+        do playerJet.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

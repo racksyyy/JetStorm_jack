@@ -1,27 +1,44 @@
 class Game {
-    field PlayersJet player;
+    field PlayersJet jet;
+    field BulletSet bullets;
 
     constructor Game new() {
-        let player = PlayersJet.new(50, 200);
+        let jet = PlayersJet.new(80, 100); // Starting position of the jet
+        let bullets = BulletSet.new();
         return this;
     }
 
-    method void run() { 
-        var char key;
+    method void run() {
+        var int key;
+
         while (true) {
             let key = Keyboard.keyPressed();
-                
-            if (key = 87) { do player.moveUp(); } // 'W' key
-            if (key = 130) { do player.moveUp(); } // Up Arrow Key
-            
-            do player.applyGravity();
-            do Sys.wait(2); // Adjust speed of game loop
+
+            // Move up only when 'W' (87) or 'Up Arrow' (128) is pressed
+            if ((key = 87) | (key = 128)) {
+                do jet.moveUp();
+            }
+
+            // Fire bullets when SPACEBAR is pressed (ASCII 32)
+            if (key = 32) {
+                do bullets.fire(jet.getX(), jet.getY());
+            }
+
+            // Clear the screen and redraw everything
+            do Screen.clearScreen();
+            do jet.draw();
+            do bullets.move();
+
+            // Small delay to make movement smoother
+            do Sys.wait(1);
         }
-        return;
+
+        return; // Prevents "Program flow may reach end" error
     }
 
     method void dispose() {
-        do player.dispose();
+        do jet.dispose();
+        do bullets.dispose();
         do Memory.deAlloc(this);
         return;
     }

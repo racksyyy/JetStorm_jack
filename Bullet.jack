@@ -1,0 +1,37 @@
+class Bullet {
+    field int x, y;
+    field boolean active;
+
+    constructor Bullet new(int startX, int startY) {
+        let x = startX;
+        let y = startY;
+        let active = false;
+        return this;
+    }
+
+    method boolean isActive() {
+        return active;
+    }
+
+    method void activate(int newX, int newY) {
+        let x = newX;
+        let y = newY;
+        let active = true;
+        return;
+    }
+
+    method void move() {
+        if (active) {
+            let y = y - 5;  // Move bullet upward
+            if (y < 0) {
+                let active = false;  // Deactivate if off-screen
+            }
+        }
+        return;
+    }
+
+    method void dispose() {
+        let active = false;
+        return;
+    }
+}

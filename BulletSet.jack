@@ -38,8 +38,6 @@ class BulletSet {
     }
     return;
 }
-
-
     method void move() {
         do bullet1.move();
         do bullet2.move();

@@ -9,9 +9,6 @@ pop this 1
 push constant 0
 pop this 2
 push pointer 0
-call PlayersJet.draw 1
-pop temp 0
-push pointer 0
 return
 function PlayersJet.getX 0
 push argument 0
@@ -271,7 +268,7 @@ pop pointer 0
 push pointer 0
 call PlayersJet.erase 1
 pop temp 0
-push constant 5
+push constant 15
 neg
 pop this 2
 push this 1
@@ -303,37 +300,33 @@ push pointer 0
 call PlayersJet.erase 1
 pop temp 0
 push this 2
-push constant 1
+push constant 3
 add
 pop this 2
 push this 2
-push constant 5
+push constant 15
 gt
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
-push constant 5
+push constant 15
 pop this 2
 label IF_FALSE0
 push this 1
 push this 2
 add
-push constant 2500
+pop this 1
+push this 1
+push constant 2100
 gt
 if-goto IF_TRUE1
 goto IF_FALSE1
 label IF_TRUE1
-push constant 2500
+push constant 2100
 pop this 1
 push constant 0
 pop this 2
-goto IF_END1
 label IF_FALSE1
-push this 1
-push this 2
-add
-pop this 1
-label IF_END1
 push pointer 0
 call PlayersJet.draw 1
 pop temp 0

@@ -17,21 +17,45 @@ class Bullet {
         let x = newX;
         let y = newY;
         let active = true;
+        do draw();
         return;
     }
 
     method void move() {
-        if (active) {
-            let y = y - 5;  // Move bullet upward
-            if (y < 0) {
-                let active = false;  // Deactivate if off-screen
-            }
+    if (active) {
+        do erase();  // Remove the previous position
+        let x = x + 6;  // Move right faster
+        if (x > 512) {  // Deactivate if off-screen
+            let active = false;
+        } else {
+            do draw();  // Draw new position
         }
-        return;
     }
+    return;
+}
+
+
+
+    method void draw() {
+    var int position;
+    let position = 16384 + ((y / 8) * 32) + (x / 16);  // Calculate screen memory address
+
+    do Memory.poke(position, -1);  // Draw a small dot representing the bullet
+    return;
+}
+
+method void erase() {
+    var int position;
+    let position = 16384 + ((y / 8) * 32) + (x / 16);
+
+    do Memory.poke(position, 0);  // Clear the bullet's previous position
+    return;
+}
+
 
     method void dispose() {
         let active = false;
+        do erase();
         return;
     }
 }

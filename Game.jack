@@ -3,7 +3,7 @@ class Game {
     field BulletSet bullets;
 
     constructor Game new() {
-        let jet = PlayersJet.new(80, 100); // Starting position of the jet
+        let jet = PlayersJet.new(80, 100);
         let bullets = BulletSet.new();
         return this;
     }
@@ -13,6 +13,9 @@ class Game {
 
         while (true) {
             let key = Keyboard.keyPressed();
+
+            // Apply gravity once per frame
+            do jet.applyGravity();
 
             // Move up only when 'W' (87) or 'Up Arrow' (128) is pressed
             if ((key = 87) | (key = 128)) {
@@ -24,17 +27,19 @@ class Game {
                 do bullets.fire(jet.getX(), jet.getY());
             }
 
-            // Clear the screen and redraw everything
+            // Clear the screen and redraw everything only ONCE per frame
             do Screen.clearScreen();
-            do jet.draw();
+            do jet.draw();   // Draw once
             do bullets.move();
 
             // Small delay to make movement smoother
             do Sys.wait(1);
         }
 
-        return; // Prevents "Program flow may reach end" error
+        return;
     }
+
+
 
     method void dispose() {
         do jet.dispose();

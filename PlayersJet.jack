@@ -6,7 +6,6 @@ class PlayersJet {
         let x = startX;
         let y = startY;
         let velocity = 0;
-        do draw();
         return this;
     }
 
@@ -68,41 +67,40 @@ class PlayersJet {
     }
 
     method void moveUp() {
-        do erase();
-        let velocity = -5;  // Jump power
+        do erase();  
+
+        let velocity = -15;  // Increased jump power (was -10)
 
         // Ensure it doesn't move above the screen
         if ((y + velocity) < 10) {
             let y = 10;
-        } else {
+        } 
+        else {
             let y = y + velocity;
         }
 
-        do draw();
+        do draw();  
         return;
     }
 
+
+
     method void applyGravity() {
-        do erase();
+        do erase();  
 
-        // Increase downward velocity
-        let velocity = velocity + 1;
-
-        // Limit max falling speed
-        if (velocity > 5) {
-            let velocity = 5;
+        let velocity = velocity + 3;  // Faster acceleration (was +2)
+        if (velocity > 15) {  // Higher max fall speed (was 12)
+            let velocity = 15;
         }
 
-        // Fix the bottom boundary (allow up to 240 instead of 230)
-        if ((y + velocity) > 2500) {
-            let y = 2500;
+        let y = y + velocity;
+
+        if (y > 2100) {
+            let y = 2100;
             let velocity = 0;
-        } else {
-            let y = y + velocity;
         }
 
-        do draw();
+        do draw();  
         return;
     }
 }
-

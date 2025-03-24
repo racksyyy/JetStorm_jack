@@ -10,38 +10,35 @@ class BulletSet {
         return this;  
     }
 
-    method void dispose() {
-        do bullet1.dispose();
-        do bullet2.dispose();
-        do bullet3.dispose();
-        do bullet4.dispose();
-        do bullet5.dispose();
-        do Memory.deAlloc(this);
-        return;
-    }
-
     method void fire(int x, int y) {
-        if (~bullet1.isActive()) {
-            do bullet1.activate(x, y);
-        } else { 
-            if (~bullet2.isActive()) {
-                do bullet2.activate(x, y);
-            } else { 
-                if (~bullet3.isActive()) {
-                    do bullet3.activate(x, y);
-                } else { 
-                    if (~bullet4.isActive()) {
-                        do bullet4.activate(x, y);
-                    } else { 
-                        if (~bullet5.isActive()) {
-                            do bullet5.activate(x, y);
-                        }
-                    }
-                }
-            }
-        }
+    if (~bullet1.isActive()) {
+        do bullet1.activate(x, y);
+        do bullet1.draw();
         return;
     }
+    if (~bullet2.isActive()) {
+        do bullet2.activate(x, y);
+        do bullet2.draw();
+        return;
+    }
+    if (~bullet3.isActive()) {
+        do bullet3.activate(x, y);
+        do bullet3.draw();
+        return;
+    }
+    if (~bullet4.isActive()) {
+        do bullet4.activate(x, y);
+        do bullet4.draw();
+        return;
+    }
+    if (~bullet5.isActive()) {
+        do bullet5.activate(x, y);
+        do bullet5.draw();
+        return;
+    }
+    return;
+}
+
 
     method void move() {
         do bullet1.move();
@@ -49,6 +46,15 @@ class BulletSet {
         do bullet3.move();
         do bullet4.move();
         do bullet5.move();
+        return;
+    }
+    method void dispose() {
+        do bullet1.dispose();
+        do bullet2.dispose();
+        do bullet3.dispose();
+        do bullet4.dispose();
+        do bullet5.dispose();
+        do Memory.deAlloc(this);
         return;
     }
 }

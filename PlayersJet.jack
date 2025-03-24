@@ -1,0 +1,108 @@
+class PlayersJet {
+    field int x, y;
+    field int velocity;
+
+    constructor PlayersJet new(int startX, int startY) {
+        let x = startX;
+        let y = startY;
+        let velocity = 0;
+        do draw();
+        return this;
+    }
+
+    method int getX() { return x; }
+    method int getY() { return y; }
+
+    method void dispose() {
+        do erase();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void draw() {
+        var int position;
+        let position = 16384 + ((y / 8) * 32) + (x / 16);
+
+        do Memory.poke(position, 384);
+        do Memory.poke(position + 32, 384);
+        do Memory.poke(position + 64, 384);
+        do Memory.poke(position + 96, 1440);
+        do Memory.poke(position + 128, 1440);
+        do Memory.poke(position + 160, -31327);
+        do Memory.poke(position + 192, -31807);
+        do Memory.poke(position + 224, -32383);
+        do Memory.poke(position + 256, -7801);
+        do Memory.poke(position + 288, -26215);
+        do Memory.poke(position + 320, 2016);
+        do Memory.poke(position + 352, 2016);
+        do Memory.poke(position + 384, -24583);
+        do Memory.poke(position + 416, -7609);
+        do Memory.poke(position + 448, -31135);
+        do Memory.poke(position + 480, -31711);
+
+        return;
+    }
+
+    method void erase() {
+        var int position;
+        let position = 16384 + ((y / 8) * 32) + (x / 16);
+
+        do Memory.poke(position, 0);
+        do Memory.poke(position + 32, 0);
+        do Memory.poke(position + 64, 0);
+        do Memory.poke(position + 96, 0);
+        do Memory.poke(position + 128, 0);
+        do Memory.poke(position + 160, 0);
+        do Memory.poke(position + 192, 0);
+        do Memory.poke(position + 224, 0);
+        do Memory.poke(position + 256, 0);
+        do Memory.poke(position + 288, 0);
+        do Memory.poke(position + 320, 0);
+        do Memory.poke(position + 352, 0);
+        do Memory.poke(position + 384, 0);
+        do Memory.poke(position + 416, 0);
+        do Memory.poke(position + 448, 0);
+        do Memory.poke(position + 480, 0);
+
+        return;
+    }
+
+    method void moveUp() {
+        do erase();
+        let velocity = -5;  // Jump power
+
+        // Ensure it doesn't move above the screen
+        if ((y + velocity) < 10) {
+            let y = 10;
+        } else {
+            let y = y + velocity;
+        }
+
+        do draw();
+        return;
+    }
+
+    method void applyGravity() {
+        do erase();
+
+        // Increase downward velocity
+        let velocity = velocity + 1;
+
+        // Limit max falling speed
+        if (velocity > 5) {
+            let velocity = 5;
+        }
+
+        // Fix the bottom boundary (allow up to 240 instead of 230)
+        if ((y + velocity) > 2500) {
+            let y = 2500;
+            let velocity = 0;
+        } else {
+            let y = y + velocity;
+        }
+
+        do draw();
+        return;
+    }
+}
+

@@ -1,0 +1,28 @@
+class Game {
+    field PlayersJet player;
+
+    constructor Game new() {
+        let player = PlayersJet.new(50, 200);
+        return this;
+    }
+
+    method void run() { 
+        var char key;
+        while (true) {
+            let key = Keyboard.keyPressed();
+                
+            if (key = 87) { do player.moveUp(); } // 'W' key
+            if (key = 130) { do player.moveUp(); } // Up Arrow Key
+            
+            do player.applyGravity();
+            do Sys.wait(2); // Adjust speed of game loop
+        }
+        return;
+    }
+
+    method void dispose() {
+        do player.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

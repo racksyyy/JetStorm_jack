@@ -7,7 +7,7 @@ class BulletSet {
         let bullet3 = Bullet.new(0, 0);  
         let bullet4 = Bullet.new(0, 0);  
         let bullet5 = Bullet.new(0, 0);  
-        return this;  
+        return this;
     }
 
     method void fire(int x, int y) {
